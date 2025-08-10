@@ -2,7 +2,7 @@ from math import sin, cos, pi
 from typing import NamedTuple
 from os import get_terminal_size
 
-GRANULARITY = 1
+GRANULARITY = 0.5
 TERMINAL_WIDTH, _ = get_terminal_size()
 
 
@@ -104,5 +104,5 @@ if __name__ == "__main__":
     # print(lines)
 
     # print spiral
-    for line in lines.values():
-        char_filled_print(line, char="*")
+    for i in range(len(lines)):
+        char_filled_print(lines.get(i, []), char="*")
