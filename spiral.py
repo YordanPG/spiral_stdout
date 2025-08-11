@@ -2,8 +2,10 @@ from math import sin, cos, pi
 from typing import NamedTuple
 from os import get_terminal_size
 
-GRANULARITY = 0.5
+GRANULARITY = 0.2
 TERMINAL_WIDTH, _ = get_terminal_size()
+DEBUG = False
+# DEBUG = True
 
 
 class Point(NamedTuple):
@@ -15,10 +17,12 @@ def spiral_coordinates(circulation_factor: int | float = 1) -> list[Point]:
 
     radius = (TERMINAL_WIDTH / 2) / circulation_factor
 
-    print(
-        f"Generating spiral points for{TERMINAL_WIDTH=}, {circulation_factor=}:\n"
-        f"  {radius=}"
-    )
+    if DEBUG:
+        radius -= 5
+        print(
+            f"Generating spiral points for{TERMINAL_WIDTH=}, {circulation_factor=} and "
+            f"{GRANULARITY=}:\n  {radius=}"
+        )
 
     points: list[Point] = []
     range_stop = int(360 * circulation_factor / GRANULARITY)
@@ -70,12 +74,13 @@ def group_points_by_y_coord(points: list[Point]) -> dict[int, list[int]]:
     return lines
 
 
-def char_filled_print(line: list[int], char="O") -> None:
+def char_filled_print(line: list[int], char="O", prefix="") -> None:
+    to_print = prefix + ""
+
     if len(line) == 0:
-        print()
+        print(to_print)
         return None
 
-    to_print = ""
     for i in range(line[-1] + 1):
         if i in line:
             to_print += char
@@ -96,13 +101,20 @@ if __name__ == "__main__":
     # translate points
     left_most_point = min(points, key=lambda p: p.x)
     dx = abs(left_most_point.x)
+    if DEBUG:
+        dx += 2
     dy = abs(points[0].y)
     points = [translate_point(p, dx, dy) for p in points]
 
     # group x-coordinates by y, to represent a pritable line
     lines = group_points_by_y_coord(points)
-    # print(lines)
+    if DEBUG:
+        print([y for y in lines.keys()])
 
     # print spiral
-    for i in range(len(lines)):
-        char_filled_print(lines.get(i, []), char="*")
+    for i in range(points[-1].y + 1):
+        # pass
+        if DEBUG:
+            char_filled_print(lines.get(i, []), "*", prefix=str(i).zfill(3))
+        else:
+            char_filled_print(lines.get(i, []), char="*")
